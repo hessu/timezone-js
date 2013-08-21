@@ -73,6 +73,7 @@
 
 
   //Handle array indexOf in IE
+  /*
   if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (el) {
       for (var i = 0; i < this.length; i++ ) {
@@ -80,6 +81,14 @@
       }
       return -1;
     }
+  }
+  */
+  
+  var _arrayIndexOf = function(arr, el) {
+    for (var i = 0; i < arr.length; i++ ) {
+      if (el === arr[i]) return i;
+    }
+    return -1;
   }
 
   // Format a number to the length = digits. For ex:
@@ -701,11 +710,11 @@
       applicableRules.sort(compareDates);
 
       //If there are not enough past DST rules...
-      if (applicableRules.indexOf(date) < 2) {
+      if (_arrayIndexOf(applicableRules, date) < 2) {
         applicableRules = applicableRules.concat(findApplicableRules(year-1, _this.rules[ruleset]));
         applicableRules.sort(compareDates);
       }
-      var pinpoint = applicableRules.indexOf(date);
+      var pinpoint = _arrayIndexOf(applicableRules, date);
       if (pinpoint > 1 && compareDates(date, applicableRules[pinpoint-1], applicableRules[pinpoint-2][1]) < 0) {
         //The previous rule does not really apply, take the one before that.
         return applicableRules[pinpoint - 2][1];
@@ -763,7 +772,7 @@
       var opts = { async: true }
         , def = this.defaultZoneFile = this.loadingScheme === this.loadingSchemes.PRELOAD_ALL
           ? this.zoneFiles
-          : 'northamerica'
+          : []
         , done = 0
         , callbackFn;
       //Override default with any passed-in opts
